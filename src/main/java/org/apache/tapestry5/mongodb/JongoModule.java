@@ -16,7 +16,7 @@ import java.util.Collection;
 /**
  * Defines services which are responsible for MongoDB initializations and connections.
  */
-public class MongodbWebModule
+public class JongoModule
 {
     public static void bind(ServiceBinder binder)
     {
