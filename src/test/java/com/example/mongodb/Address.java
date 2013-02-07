@@ -1,9 +1,11 @@
 package com.example.mongodb;
 
-import com.google.code.morphia.annotations.Embedded;
+import org.jongo.marshall.jackson.id.Id;
 
-@Embedded
 public class Address {
+
+	@Id
+	private String id;
 
     private String street;
     private String city;

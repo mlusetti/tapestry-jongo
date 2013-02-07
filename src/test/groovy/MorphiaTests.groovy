@@ -16,11 +16,11 @@ import com.google.code.morphia.Datastore
 import com.example.mongodb.Address
 import com.example.mongodb.Hotel
 import org.apache.tapestry5.internal.mongodb.MongoDBTestModule
-import org.apache.tapestry5.mongodb.MongodbWebModule
+import org.apache.tapestry5.mongodb.JongoModule
 
 /**
  */
-@SubModule([ MongodbCoreModule.class, MongodbWebModule.class, MongoDBTestModule.class ])
+@SubModule([ MongodbCoreModule.class, JongoModule.class, MongoDBTestModule.class ])
 class MorphiaTests extends Specification
 {
     final int total = 1000

@@ -1,20 +1,18 @@
 package com.example.mongodb;
 
-import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Id;
 import org.bson.types.ObjectId;
+import org.jongo.marshall.jackson.id.Id;
 
-@Entity
 public class Hotel
 {
-
-    @Id private ObjectId id;
+    @Id
+	private String id;
 
     private String name;
     private int stars;
 
-    @Embedded
     private Address address;
 
     public Address getAddress() {

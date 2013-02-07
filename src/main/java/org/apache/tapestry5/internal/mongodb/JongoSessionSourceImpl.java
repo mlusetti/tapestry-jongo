@@ -1,10 +1,15 @@
 package org.apache.tapestry5.internal.mongodb;
 
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.mongodb.JongoSessionSource;
 import org.apache.tapestry5.mongodb.MongoDB;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -14,14 +19,41 @@ public class JongoSessionSourceImpl implements JongoSessionSource
 	private final Logger logger;
 	private final MongoDB mongoDB;
 
+	private final Collection<Class> mappedClasses;
+
 	private final Jongo jongo;
 
-	public JongoSessionSourceImpl(Logger logger, MongoDB mongoDB)
+	public JongoSessionSourceImpl(Logger logger, MongoDB mongoDB,
+								  ClassNameLocator classNameLocator, Collection<String> packages)
 	{
 		this.logger = logger;
 		this.mongoDB = mongoDB;
 
 		jongo = new Jongo(mongoDB.getDefaultMongoDb());
+
+		mappedClasses = new ArrayList<Class>();
+
+		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        for (String packageName : packages)
+        {
+            for (String className : classNameLocator.locateClassNames(packageName))
+            {
+                try
+                {
+                    Class entity = contextClassLoader.loadClass(className);
+
+                    mappedClasses.add(entity);
+
+                }
+				catch (ClassNotFoundException cnfe)
+                {
+                    logger.error("Unable to locate {} within {}",className, packageName);
+
+                    throw new RuntimeException(cnfe);
+                }
+            }
+        }
 	}
 
 	/**
@@ -46,5 +78,16 @@ public class JongoSessionSourceImpl implements JongoSessionSource
 	public MongoCollection obtainCollation(String collectionName)
 	{
 		return jongo.getCollection(collectionName);
+	}
+
+	/**
+	 * Obtain each classes mapped by Jongo
+	 *
+	 * @return collection of classes mapped by Jongo
+	 */
+	@Override
+	public Collection<Class> getMappedClasses()
+	{
+		return mappedClasses;
 	}
 }
